@@ -1,0 +1,15 @@
+# environment definition
+language: python
+python:
+  - "3.6"
+
+# install requirements
+install:
+  - pip install -r requirements.txt
+  - pip install -r requirements-dev.txt
+
+# script testing
+script:
+  - pipenv run flake8 .
+  - pipenv run coverage run test_cdtweetbot.py
+  - coveralls

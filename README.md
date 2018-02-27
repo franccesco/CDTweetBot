@@ -1,7 +1,7 @@
 # CDTweetBot
 [![Build Status](https://travis-ci.org/franccesco/CDTweetBot.svg?branch=master)](https://travis-ci.org/franccesco/CDTweetBot)[![Coverage Status](https://coveralls.io/repos/github/franccesco/CDTweetBot/badge.svg?branch=master)](https://coveralls.io/github/franccesco/CDTweetBot?branch=master)
 
-**CDTweetBot** is a custom made twitter-bot that pushes new blog posts from [CodingDose()](https://codingdose.info/) to Twitter automatically using the [@codingdose](https://twitter.com/codingdose) account.
+**CDTweetBot** is a custom made twitter-bot that share new blog posts from [CodingDose()](https://codingdose.info/) to Twitter automatically using the [@codingdose](https://twitter.com/codingdose) account.
 
 
 **Disclaimer: This project is a Work-in-Progress and only works with my Blog, feel free to reuse my code as an example to use it in your projects.**

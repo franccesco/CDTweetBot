@@ -1,8 +1,7 @@
-import time
 import tweepy
 import requests
 from os import getenv
-from time import sleep
+# from time import sleep
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv, find_dotenv
 
@@ -20,12 +19,12 @@ api = tweepy.API(twitter_auth)
 
 
 # rate-limit handler
-def limit_handled(cursor):
-    while True:
-        try:
-            yield cursor.next()
-        except tweepy.RateLimitError:
-            sleep(15 * 60)
+# def limit_handled(cursor):
+#     while True:
+#         try:
+#             yield cursor.next()
+#         except tweepy.RateLimitError:
+#             sleep(15 * 60)
 
 
 def get_links():

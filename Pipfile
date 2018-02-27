@@ -12,6 +12,8 @@ python-dotenv = "*"
 tweepy = "*"
 "beautifulsoup4" = "*"
 "w3lib" = "*"
+coverage = "*"
+"bs4" = "*"
 
 
 [dev-packages]

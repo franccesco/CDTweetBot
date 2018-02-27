@@ -12,11 +12,13 @@ consumer_secret = getenv('consumer_secret')
 access_token = getenv('access_token')
 access_secret = getenv('access_secret')
 
-# handling authentication and setting API
-twitter_auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-twitter_auth.set_access_token(access_token, access_secret)
-api = tweepy.API(twitter_auth)
 
+def auth():
+    """handling authentication and setting API."""
+    twitter_auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    twitter_auth.set_access_token(access_token, access_secret)
+    api = tweepy.API(twitter_auth)
+    return api
 
 # rate-limit handler
 # def limit_handled(cursor):

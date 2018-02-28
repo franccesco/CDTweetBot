@@ -1,9 +1,11 @@
 import tweepy
+import sqlite3
 import requests
+from os import path
 from os import getenv
-# from time import sleep
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv, find_dotenv
+# from time import sleep
 
 # load environment keys
 load_dotenv(find_dotenv())
@@ -50,3 +52,30 @@ def get_links():
         ordered_posts[post_title] = post_link
 
     return ordered_posts
+
+
+def connect_database():
+    """Connects/create database if it doesn't exists."""
+    posts_db = 'posts.db'
+    conn = sqlite3.connect(posts_db)
+    return conn
+
+
+def populate_posts_db():
+    """Populates posts.db with posts and links."""
+    links = get_links()
+
+    # connecting to posts.db
+    conn = connect_database()
+    posts_db = conn.cursor()
+
+    # creating table posts with post title and link
+    posts_db.execute('CREATE TABLE posts (title TEXT, link TEXT)')
+
+    # populating with posts
+    for title, link in links.items():
+        posts_db.execute("INSERT INTO posts (title, link) \
+                         VALUES ('{}', '{}')".format(title, link))
+    conn.commit()
+    conn.close()
+    return True

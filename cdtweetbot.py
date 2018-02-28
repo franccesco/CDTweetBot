@@ -1,8 +1,8 @@
 import tweepy
 import sqlite3
 import requests
-from os import getenv
 from bs4 import BeautifulSoup
+from os import getenv, path, remove
 from dotenv import load_dotenv, find_dotenv
 # from time import sleep
 
@@ -60,6 +60,30 @@ def connect_database():
     return conn
 
 
+def create_table(purge='n'):
+    """Create 'posts' table in database."""
+    conn = connect_database()
+    posts_db = conn.cursor()
+
+    # if purge switch is activated, then remove posts.db
+    if path.isfile('posts.db') and purge == 'y':
+        remove('posts.db')
+
+    # try to create a table, if already exists then leave it be.
+    try:
+        posts_db.execute('''
+                CREATE TABLE `posts` (
+                `id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+                `title` integer NOT NULL UNIQUE,
+                `link`  integer NOT NULL UNIQUE,
+                UNIQUE(`title`,`link`));
+            ''')
+    except Exception as e:
+        print('Table post already exists.')
+
+    return True
+
+
 def populate_posts_db():
     """Populates posts.db with posts and links."""
     links = get_links()
@@ -68,13 +92,15 @@ def populate_posts_db():
     conn = connect_database()
     posts_db = conn.cursor()
 
-    # creating table posts with post title and link
-    posts_db.execute('CREATE TABLE posts (title TEXT, link TEXT)')
-
     # populating with posts
     for title, link in links.items():
-        posts_db.execute("INSERT INTO posts (title, link) \
-                         VALUES ('{}', '{}')".format(title, link))
+        try:
+            posts_db.execute('''
+                INSERT INTO posts (title, link) VALUES ('{}', '{}')
+                '''.format(title, link))
+        except Exception as e:
+            print('Omitted: {} - {} '.format(title, link))
+            pass
     conn.commit()
     conn.close()
     return True

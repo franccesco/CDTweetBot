@@ -32,7 +32,18 @@ class TestCDbot(unittest.TestCase):
         # check if connection is successful
         self.assertTrue(conn_successful)
 
+    def test_purge_posts_database(self):
+        """Test if purge switch in database works correctly."""
+        conn_successful = tb.create_table(purge='y')
+        self.assertTrue(conn_successful)
+
+    def test_duplication_posts_db(self):
+        """Test if duplicate entries are handled correctly."""
+        self.assertTrue(tb.create_table(purge='y'))
+        self.assertTrue(tb.populate_posts_db())
+
     def test_populate_posts_db(self):
+        """Test populate posts."""
         self.assertTrue(tb.populate_posts_db())
 
 

@@ -1,7 +1,6 @@
 import tweepy
 import sqlite3
 import requests
-from os import path
 from os import getenv
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv, find_dotenv

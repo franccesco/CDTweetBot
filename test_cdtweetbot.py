@@ -34,7 +34,7 @@ class TestCDbot(unittest.TestCase):
 
     def test_purge_posts_database(self):
         """Test if purge switch in database works correctly."""
-        conn_successful = tb.create_table(purge='y')
+        conn_successful = tb.create_table(purge=True, verbose=True)
         self.assertTrue(conn_successful)
 
     def test_duplication_posts_db(self):
@@ -44,7 +44,11 @@ class TestCDbot(unittest.TestCase):
 
     def test_populate_posts_db(self):
         """Test populate posts."""
-        self.assertTrue(tb.populate_posts_db())
+        self.assertTrue(tb.populate_posts_db(verbose=True))
+
+    # def test_show_posts_db(self):
+    #     """Test if posts can be extracted from database."""
+    #     self.assertTrue(tb.show_posts())
 
 
 unittest.main()

@@ -60,13 +60,13 @@ def connect_database():
     return conn
 
 
-def create_table(purge='n'):
+def create_table(purge=False, verbose=False):
     """Create 'posts' table in database."""
     conn = connect_database()
     posts_db = conn.cursor()
 
     # if purge switch is activated, then remove posts.db
-    if path.isfile('posts.db') and purge == 'y':
+    if path.isfile('posts.db') and purge is True:
         remove('posts.db')
 
     # try to create a table, if already exists then leave it be.
@@ -79,12 +79,13 @@ def create_table(purge='n'):
                 UNIQUE(`title`,`link`));
             ''')
     except Exception as e:
-        print('Table post already exists.')
+        if verbose is True:
+            print('Table post already exists.')
 
     return True
 
 
-def populate_posts_db():
+def populate_posts_db(verbose=False):
     """Populates posts.db with posts and links."""
     links = get_links()
 
@@ -99,7 +100,8 @@ def populate_posts_db():
                 INSERT INTO posts (title, link) VALUES ('{}', '{}')
                 '''.format(title, link))
         except Exception as e:
-            print('Omitted: {} - {} '.format(title, link))
+            if verbose is True:
+                print('Omitted: {} - {} '.format(title, link))
             pass
     conn.commit()
     conn.close()

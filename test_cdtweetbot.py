@@ -46,9 +46,22 @@ class TestCDbot(unittest.TestCase):
         """Test populate posts."""
         self.assertTrue(tb.populate_posts_db(verbose=True))
 
-    # def test_show_posts_db(self):
-    #     """Test if posts can be extracted from database."""
-    #     self.assertTrue(tb.show_posts())
+    def test_show_posts_db(self):
+        """Test if posts can be extracted from database."""
+
+        # change posts dictionary to a title list
+        posts_dict = tb.get_posts()
+        posts_list = list(posts_dict.keys())
+
+        # get the first three posts
+        first_post = posts_list[-1]
+        second_post = posts_list[-2]
+        third_post = posts_list[-3]
+
+        # compare them
+        self.assertEqual('Hello All!', first_post)
+        self.assertEqual('Sort a Dictionary With Python', second_post)
+        self.assertEqual('Migrate From Ghost Blog to Jekyll', third_post)
 
 
 unittest.main()

@@ -106,3 +106,25 @@ def populate_posts_db(verbose=False):
     conn.commit()
     conn.close()
     return True
+
+
+def get_posts(verbose=False):
+    """Returns a dictionary with database values"""
+
+    # If database doesn't exist, create it
+    if not path.isfile('posts.db'):
+        create_table()
+        populate_posts_db()
+
+    # connect to database
+    conn = connect_database()
+    posts_db = conn.cursor()
+
+    # query DB for posts and appends
+    #  the elements to a dictionary:
+    #   post[0] = title
+    #   post[1] = link
+    posts = {}
+    for post in posts_db.execute('SELECT title, link FROM posts'):
+        posts[post[0]] = post[1]
+    return posts

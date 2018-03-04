@@ -64,7 +64,9 @@ class TestCDbot(unittest.TestCase):
         self.assertEqual('Migrate From Ghost Blog to Jekyll', third_post)
 
     def test_get_number_of_pages(self):
-        pass
+        """Test if get_num_pages() returns an <int> and is greater than 1."""
+        self.assertIs(int, type(tb.get_num_pages()))
+        self.assertGreaterEqual(2, tb.get_num_pages())
 
 
 unittest.main()

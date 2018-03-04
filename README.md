@@ -10,6 +10,7 @@
 - [x] Handle Twitter Authentication System (OAuth)
 - [x] Scrape the blog searching for new blog posts
 - [x] SQLite3 integration to store posts and handles posts duplication
+- [x] Scrape multiple pages, not only index
 - [ ] Add CLI arguments
 - [ ] If a new blog post is identified, then it will share it through twitter
 - [ ] Autoreply Direct Messages

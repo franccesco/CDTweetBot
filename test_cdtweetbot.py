@@ -63,5 +63,8 @@ class TestCDbot(unittest.TestCase):
         self.assertEqual('Sort a Dictionary With Python', second_post)
         self.assertEqual('Migrate From Ghost Blog to Jekyll', third_post)
 
+    def test_get_number_of_pages(self):
+        pass
+
 
 unittest.main()

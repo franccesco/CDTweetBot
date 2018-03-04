@@ -30,25 +30,49 @@ def auth():
 #             sleep(15 * 60)
 
 
-def get_links():
-    """Get post links from codingdose."""
-
-    # collect and parse page with bs4
+def get_num_pages():
+    """Get number of pages in index."""
     base_url = 'https://codingdose.info'
     page = requests.get(base_url)
     page_contents = BeautifulSoup(page.text, 'html.parser')
 
-    # find class post-list and then filter only href lines
-    post_list = page_contents.find(class_='post-list')
-    posts_items = post_list.find_all('a')
+    # get number of pages from class 'page-number'
+    class_pages = page_contents.find(class_='page-number')
+    total_pages = class_pages.get_text()
 
+    # return the last page number from 'Page 1 of <x>'
+    return int(total_pages[-1])
+
+
+def get_links():
+    """Get post links from codingdose."""
+
+    # get number of pages
+    total_pages = get_num_pages() + 1
+
+    # dictionary holding all titles and links
     ordered_posts = {}
 
-    for post in posts_items:
-        # appending post title and link to ordered_posts
-        post_title = post.contents[0]
-        post_link = base_url + post.get('href')
-        ordered_posts[post_title] = post_link
+    # scraping all pages, page 1 is index, there's no '/page/1/'
+    for page in range(1, total_pages):
+        if page == 1:
+            base_url = 'https://codingdose.info'
+        elif page > 1:
+            base_url = 'https://codingdose.info/page/{}/'.format(page)
+
+        # collect and parse page with bs4
+        page = requests.get(base_url)
+        page_contents = BeautifulSoup(page.text, 'html.parser')
+
+        # find class post-list and then filter only href lines
+        post_list = page_contents.find(class_='post-list')
+        posts_items = post_list.find_all('a')
+
+        for post in posts_items:
+            # appending post title and link to ordered_posts
+            post_title = post.contents[0]
+            post_link = base_url + post.get('href')
+            ordered_posts[post_title] = post_link
 
     return ordered_posts
 

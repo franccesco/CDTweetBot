@@ -1,10 +1,24 @@
+#!/usr/bin/env python3
+#
+# Author: Franccesco Orozco
+# Version: to_be_filled
+#
+# CodingDose Tweet Bot is a twitter bot that utilizes Tweepy, requests,
+# sqlite3 and BeautifulSoup to automatically extract links from my blog
+# codingdose.info and shares them to twitter. It does this by extracting
+# all posts links from codingdose.info, stripping the html tags and saving
+# the post title + the post link to a database in SQLite3, after it has stored
+# all the posts in the database, proceed to share each one of them to twitter
+# with relevant hashtags such as 'programming', 'development' and 'coding'.
+
 import tweepy
 import sqlite3
+import argparse
 import requests
+from time import sleep
 from bs4 import BeautifulSoup
 from os import getenv, path, remove
 from dotenv import load_dotenv, find_dotenv
-# from time import sleep
 
 # load environment keys
 load_dotenv(find_dotenv())
@@ -21,13 +35,29 @@ def auth():
     api = tweepy.API(twitter_auth)
     return api
 
-# rate-limit handler
-# def limit_handled(cursor):
-#     while True:
-#         try:
-#             yield cursor.next()
-#         except tweepy.RateLimitError:
-#             sleep(15 * 60)
+
+def limit_handler(cursor):  # pragma: no cover
+    """rate-limit handler will sleep for 15 minutes when limit is reached."""
+    while True:
+        try:
+            yield cursor.next()
+        except tweepy.RateLimitError:
+            sleep(15 * 60)
+
+
+def delete_all_tweets(verbose=False):  # pragma: no cover
+    """Deletes all tweets made by user."""
+    api = auth()
+    for status in limit_handler(tweepy.Cursor(api.user_timeline).items()):
+        api.destroy_status(status.id)
+        if verbose:
+            print('Destroid tweet id: {}'.format(status.id))
+    return True
+
+
+def tweet_posts(verbose=False):
+    """Share posts not found in database to twitter""".
+    pass
 
 
 def get_num_pages():
@@ -152,3 +182,37 @@ def get_posts(verbose=False):
     for post in posts_db.execute('SELECT title, link FROM posts'):
         posts[post[0]] = post[1]
     return posts
+
+
+# CLI arguments with argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('-s', '--show-posts',
+                    help='Show posts in database', action='store_true')
+parser.add_argument('-p', '--purge-db',
+                    help='Purge the database', action='store_true')
+
+exclusive = parser.add_mutually_exclusive_group()
+exclusive.add_argument('-d', '--delete-all',
+                       help='Delete all tweets', action='store_true')
+args = parser.parse_args()
+
+if args.delete_all:  # pragma: no cover
+    answer = input('Are you sure you want to delete ALL your tweets? [Y/n]: ')
+    answer = answer.lower()
+    if answer == 'y' or answer == '':
+        print('Deleting all tweets...')
+        delete_all_tweets()
+
+if args.purge_db:  # pragma: no cover
+    answer = input("You're about to purge the database, proceed? [Y/n]: ")
+    answer = answer.lower()
+    if answer == 'y' or answer == '':
+        create_table(purge=True)
+        print('Database purged. Posts where ')
+
+if args.show_posts:  # pragma: no cover
+    posts = get_posts()
+    post_no = 0
+    for title, link in posts.items():
+        print('{}. {}: {}'.format(post_no, title, link))
+        post_no += 1

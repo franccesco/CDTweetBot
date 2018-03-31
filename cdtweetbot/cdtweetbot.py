@@ -53,10 +53,10 @@ def delete_all_tweets(verbose=False):  # pragma: no cover
             print('Destroid tweet id: {}'.format(status.id))
     return True
 
-
-def tweet_posts(verbose=False):
-    """Share posts not found in database to twitter."""
-    pass
+# TODO: tweet posts from database.
+# def tweet_posts(verbose=False):
+#     """Share posts not found in database to twitter."""
+#     pass
 
 
 def get_num_pages():

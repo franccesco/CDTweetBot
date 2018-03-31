@@ -75,8 +75,6 @@ def get_num_pages():
 
 def get_links():
     """Get post links from codingdose."""
-
-    # get number of pages
     total_pages = get_num_pages() + 1
 
     # dictionary holding all titles and links
@@ -140,8 +138,6 @@ def create_table(purge=False, verbose=False):
 def populate_posts_db(verbose=False):
     """Populates posts.db with posts and links."""
     links = get_links()
-
-    # connecting to posts.db
     conn = connect_database()
     posts_db = conn.cursor()
 

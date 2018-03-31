@@ -71,6 +71,3 @@ class TestCDbot(unittest.TestCase):
     # def test_delete_all_tweets(self):
     #     """Test if all tweets are deleted. DANGEROUS."""
     #     self.assertTrue(tb.delete_all_tweets(verbose=True))
-
-
-unittest.main()

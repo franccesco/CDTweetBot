@@ -56,13 +56,13 @@ def delete_all_tweets(verbose=False):  # pragma: no cover
 
 
 def tweet_posts(verbose=False):
-    """Share posts not found in database to twitter""".
+    """Share posts not found in database to twitter."""
     pass
 
 
 def get_num_pages():
     """Get number of pages in index."""
-    base_url = 'https://codingdose.info'
+    base_url = 'https://codingdose.info/archives/'
     page = requests.get(base_url)
     page_contents = BeautifulSoup(page.text, 'html.parser')
 
@@ -86,23 +86,22 @@ def get_links():
     # scraping all pages, page 1 is index, there's no '/page/1/'
     for page in range(1, total_pages):
         if page == 1:
-            base_url = 'https://codingdose.info'
+            base_url = 'https://codingdose.info/archives/'
         elif page > 1:
-            base_url = 'https://codingdose.info/page/{}/'.format(page)
+            base_url = 'https://codingdose.info/archives/page/{}/'.format(page)
+            # collect and parse page with bs4
+            page = requests.get(base_url)
+            page_contents = BeautifulSoup(page.text, 'html.parser')
 
-        # collect and parse page with bs4
-        page = requests.get(base_url)
-        page_contents = BeautifulSoup(page.text, 'html.parser')
+            # find class post-list and then filter only href lines
+            post_list = page_contents.find(class_='post-list')
+            posts_items = post_list.find_all('a')
 
-        # find class post-list and then filter only href lines
-        post_list = page_contents.find(class_='post-list')
-        posts_items = post_list.find_all('a')
-
-        for post in posts_items:
-            # appending post title and link to ordered_posts
-            post_title = post.contents[0]
-            post_link = base_url + post.get('href')
-            ordered_posts[post_title] = post_link
+            for post in posts_items:
+                # appending post title and link to ordered_posts
+                post_title = post.contents[0]
+                post_link = base_url + post.get('href')
+                ordered_posts[post_title] = post_link
 
     return ordered_posts
 
@@ -156,6 +155,7 @@ def populate_posts_db(verbose=False):
         except Exception as e:
             if verbose is True:
                 print('Omitted: {} - {} '.format(title, link))
+                print(e)
             pass
     conn.commit()
     conn.close()

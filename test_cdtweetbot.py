@@ -1,10 +1,12 @@
+"""CDTweetBot Test Cases."""
+
 import unittest
 from os import path
 import cdtweetbot as tb
 
 
 class TestCDbot(unittest.TestCase):
-    """Class that tests cdtweetbot.py"""
+    """Class that tests cdtweetbot.py."""
 
     def test_get_posts(self):
         """Test if links are ordered correctly."""
@@ -20,7 +22,6 @@ class TestCDbot(unittest.TestCase):
 
     def test_create_db(self):
         """Test database 'posts.db' creation."""
-
         # create/connection
         conn_successful = tb.connect_database()
 
@@ -48,7 +49,6 @@ class TestCDbot(unittest.TestCase):
 
     def test_show_posts_db(self):
         """Test if posts can be extracted from database."""
-
         # change posts dictionary to a title list
         posts_dict = tb.get_posts()
         posts_list = list(posts_dict.keys())

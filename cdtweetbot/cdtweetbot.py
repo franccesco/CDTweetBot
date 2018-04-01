@@ -75,10 +75,9 @@ def get_num_pages():
 
 def get_archive_posts():
     """Get post links from codingdose archive."""
-    total_pages = get_num_pages()
     ordered_posts = {}
     # scraping all pages, page 1 is index, there's no '/page/1/'
-    for page in range(1, total_pages + 1):
+    for page in range(1, get_num_pages() + 1):
         if page == 1:
             base_url = 'https://codingdose.info/archives/'
         elif page > 1:
@@ -134,11 +133,10 @@ def create_table(purge=False, verbose=False):
 def populate_posts_db(verbose=False):
     """Populates posts.db with posts and links from /archive/."""
     database_connection = connect_database()
-    database_cursor = database_connection.cursor()
     archive_links = get_archive_posts()
     for title, link in archive_links.items():
         try:
-            database_cursor.execute('''
+            database_connection.cursor().execute('''
                 INSERT INTO posts (title, link) VALUES ('{}', '{}')
                 '''.format(title, link))
         except Exception as e:

@@ -76,10 +76,7 @@ def get_num_pages():
 def get_archive_posts():
     """Get post links from codingdose archive."""
     total_pages = get_num_pages()
-
-    # dictionary holding all titles and links
     ordered_posts = {}
-
     # scraping all pages, page 1 is index, there's no '/page/1/'
     for page in range(1, total_pages + 1):
         if page == 1:
@@ -149,7 +146,6 @@ def populate_posts_db(verbose=False):
             if verbose is True:
                 print('Omitted: {} - {} '.format(title, link))
                 print(e)
-            pass
     database_connection.commit()
     database_connection.close()
     return True

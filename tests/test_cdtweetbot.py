@@ -12,7 +12,7 @@ class TestCDbot(unittest.TestCase):
 
     def test_get_posts(self):
         """Test if links are ordered correctly."""
-        links = tb.get_links()
+        links = tb.get_archive_posts()
         links_amount = len(links)
         links_type = type(links)
         self.assertTrue(links_type == dict)

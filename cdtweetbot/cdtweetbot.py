@@ -70,33 +70,27 @@ def get_num_pages():
     total_pages = class_pages.get_text()
 
     # return the last page number from 'Page 1 of <x>'
-    return int(total_pages[-1])
+    return int(total_pages[-1]) + 1
 
 
 def get_archive_posts():
     """Get post links from codingdose archive."""
-    total_pages = get_num_pages()
+    base_url = 'https://codingdose.info/archives/'
+    paging_url = base_url + 'page/'
     ordered_posts = {}
-    # scraping all pages, page 1 is index, there's no '/page/1/'
-    for page in range(1, total_pages + 1):
-        if page == 1:
-            base_url = 'https://codingdose.info/archives/'
-        elif page > 1:
-            base_url = 'https://codingdose.info/archives/page/{}/'.format(page)
-            # collect and parse page with bs4
-            page = requests.get(base_url)
-            page_contents = BeautifulSoup(page.text, 'html.parser')
+    for page in range(1, get_num_pages()):
+        url = base_url if page < 2 else paging_url + str(page)
+        page = requests.get(url)
+        page_contents = BeautifulSoup(page.text, 'html.parser')
 
-            # find class post-list and then filter only href lines
-            post_list = page_contents.find(class_='post-list')
-            posts_items = post_list.find_all('a')
-
-            for post in posts_items:
-                # appending post title and link to ordered_posts
-                post_title = post.contents[0]
-                post_link = base_url + post.get('href')
-                ordered_posts[post_title] = post_link
-
+        # find class post-list and then filter only href lines
+        post_list = page_contents.find(class_='post-list')
+        posts_items = post_list.find_all('a')
+        for post in posts_items:
+            # appending post title and link to ordered_posts
+            post_title = post.contents[0]
+            post_link = url + post.get('href')
+            ordered_posts[post_title] = post_link
     return ordered_posts
 
 

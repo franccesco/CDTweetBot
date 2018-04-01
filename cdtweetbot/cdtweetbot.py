@@ -128,7 +128,6 @@ def create_table(purge=False, verbose=False):
     except Exception as e:
         if verbose is True:
             print('Table post already exists.')
-
     return True
 
 

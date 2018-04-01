@@ -45,13 +45,11 @@ class TestCDbot(unittest.TestCase):
     def test_duplication_posts_db(self):
         """Test if duplicate entries are handled correctly."""
         self.assertTrue(tb.create_table(purge='y'))
-        self.assertTrue(tb.populate_posts_db())
+        self.assertIsNone(tb.populate_posts_db())
 
     def test_populate_posts_db(self):
         """Test populate posts."""
-        print_trap = StringIO()
-        with redirect_stdout(print_trap):
-            self.assertTrue(tb.populate_posts_db(verbose=True))
+        self.assertIsNone(tb.populate_posts_db())
 
     def test_show_posts_db(self):
         """Test if posts can be extracted from database."""

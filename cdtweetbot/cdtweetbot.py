@@ -60,7 +60,7 @@ def delete_all_tweets(verbose=False):  # pragma: no cover
 
 
 def get_num_pages():
-    """Get number of pages in index."""
+    """Get number of pages in archive and returns a dictionary."""
     base_url = 'https://codingdose.info/archives/'
     page = requests.get(base_url)
     page_contents = BeautifulSoup(page.text, 'html.parser')
@@ -75,9 +75,10 @@ def get_num_pages():
 
 def get_archive_posts():
     """Get post links from codingdose archive."""
+    total_pages = get_num_pages()
     ordered_posts = {}
     # scraping all pages, page 1 is index, there's no '/page/1/'
-    for page in range(1, get_num_pages() + 1):
+    for page in range(1, total_pages + 1):
         if page == 1:
             base_url = 'https://codingdose.info/archives/'
         elif page > 1:
@@ -130,22 +131,18 @@ def create_table(purge=False, verbose=False):
     return True
 
 
-def populate_posts_db(verbose=False):
+def populate_posts_db():
     """Populates posts.db with posts and links from /archive/."""
-    database_connection = connect_database()
+    db_con = connect_database()
     archive_links = get_archive_posts()
-    for title, link in archive_links.items():
-        try:
-            database_connection.cursor().execute('''
-                INSERT INTO posts (title, link) VALUES ('{}', '{}')
-                '''.format(title, link))
-        except Exception as e:
-            if verbose is True:
-                print('Omitted: {} - {} '.format(title, link))
-                print(e)
-    database_connection.commit()
-    database_connection.close()
-    return True
+    try:
+        db_con.executemany(
+            'INSERT INTO posts (title, link) VALUES (?, ?)',
+            archive_links.items())
+    except sqlite3.IntegrityError:
+        next
+    db_con.commit()
+    db_con.close()
 
 
 def get_posts(verbose=False):

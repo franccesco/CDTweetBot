@@ -75,13 +75,15 @@ def get_num_pages():
 
 def get_links():
     """Get post links from codingdose."""
-    total_pages = get_num_pages() + 1
+
+    # get number of pages
+    total_pages = get_num_pages()
 
     # dictionary holding all titles and links
     ordered_posts = {}
 
     # scraping all pages, page 1 is index, there's no '/page/1/'
-    for page in range(1, total_pages):
+    for page in range(1, total_pages + 1):
         if page == 1:
             base_url = 'https://codingdose.info/archives/'
         elif page > 1:
@@ -136,15 +138,14 @@ def create_table(purge=False, verbose=False):
 
 
 def populate_posts_db(verbose=False):
-    """Populates posts.db with posts and links."""
-    links = get_links()
-    conn = connect_database()
-    posts_db = conn.cursor()
+    """Populates posts.db with posts and links from /archive/."""
+    database_connection = connect_database()
+    database_cursor = database_connection.cursor()
 
-    # populating with posts
-    for title, link in links.items():
+    archive_links = get_links()
+    for title, link in archive_links.items():
         try:
-            posts_db.execute('''
+            database_cursor.execute('''
                 INSERT INTO posts (title, link) VALUES ('{}', '{}')
                 '''.format(title, link))
         except Exception as e:
@@ -152,8 +153,8 @@ def populate_posts_db(verbose=False):
                 print('Omitted: {} - {} '.format(title, link))
                 print(e)
             pass
-    conn.commit()
-    conn.close()
+    database_connection.commit()
+    database_connection.close()
     return True
 
 

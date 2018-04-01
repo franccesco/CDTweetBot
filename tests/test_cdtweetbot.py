@@ -71,7 +71,7 @@ class TestCDbot(unittest.TestCase):
     def test_get_number_of_pages(self):
         """Test if get_num_pages() returns an <int> and is greater than 1."""
         self.assertIs(int, type(tb.get_num_pages()))
-        self.assertGreaterEqual(2, tb.get_num_pages())
+        self.assertGreaterEqual(tb.get_num_pages(), 2)
 
     # def test_delete_all_tweets(self):
     #     """Test if all tweets are deleted. DANGEROUS."""

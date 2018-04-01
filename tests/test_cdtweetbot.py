@@ -1,8 +1,10 @@
 """CDTweetBot Test Cases."""
-
 import unittest
-from os import path
 import cdtweetbot as tb
+
+from os import path, remove
+from io import StringIO
+from contextlib import redirect_stdout
 
 
 class TestCDbot(unittest.TestCase):
@@ -35,7 +37,9 @@ class TestCDbot(unittest.TestCase):
 
     def test_purge_posts_database(self):
         """Test if purge switch in database works correctly."""
-        conn_successful = tb.create_table(purge=True, verbose=True)
+        print_trap = StringIO()
+        with redirect_stdout(print_trap):
+            conn_successful = tb.create_table(purge=True, verbose=True)
         self.assertTrue(conn_successful)
 
     def test_duplication_posts_db(self):
@@ -45,7 +49,9 @@ class TestCDbot(unittest.TestCase):
 
     def test_populate_posts_db(self):
         """Test populate posts."""
-        self.assertTrue(tb.populate_posts_db(verbose=True))
+        print_trap = StringIO()
+        with redirect_stdout(print_trap):
+            self.assertTrue(tb.populate_posts_db(verbose=True))
 
     def test_show_posts_db(self):
         """Test if posts can be extracted from database."""
@@ -62,6 +68,7 @@ class TestCDbot(unittest.TestCase):
         self.assertEqual('Hello All!', first_post)
         self.assertEqual('Sort a Dictionary With Python', second_post)
         self.assertEqual('Migrate From Ghost Blog to Jekyll', third_post)
+        remove('posts.db')
 
     def test_get_number_of_pages(self):
         """Test if get_num_pages() returns an <int> and is greater than 1."""

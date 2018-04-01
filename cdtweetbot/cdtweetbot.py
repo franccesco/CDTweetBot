@@ -73,10 +73,8 @@ def get_num_pages():
     return int(total_pages[-1])
 
 
-def get_links():
-    """Get post links from codingdose."""
-
-    # get number of pages
+def get_archive_posts():
+    """Get post links from codingdose archive."""
     total_pages = get_num_pages()
 
     # dictionary holding all titles and links
@@ -141,8 +139,7 @@ def populate_posts_db(verbose=False):
     """Populates posts.db with posts and links from /archive/."""
     database_connection = connect_database()
     database_cursor = database_connection.cursor()
-
-    archive_links = get_links()
+    archive_links = get_archive_posts()
     for title, link in archive_links.items():
         try:
             database_cursor.execute('''

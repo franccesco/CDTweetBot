@@ -11,6 +11,8 @@
 # all the posts in the database, proceed to share each one of them to twitter
 # with relevant hashtags such as 'programming', 'development' and 'coding'.
 
+"""Modules to handle Twitter bot and database operations."""
+
 import tweepy
 import sqlite3
 import requests
@@ -28,7 +30,7 @@ access_secret = getenv('access_secret')
 
 
 def auth():
-    """handling authentication and setting API."""
+    """Handle authentication and API settings."""
     twitter_auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     twitter_auth.set_access_token(access_token, access_secret)
     api = tweepy.API(twitter_auth)
@@ -45,18 +47,13 @@ def limit_handler(cursor):  # pragma: no cover
 
 
 def delete_all_tweets(verbose=False):  # pragma: no cover
-    """Deletes all tweets made by user."""
+    """Delete all tweets made by user."""
     api = auth()
     for status in limit_handler(tweepy.Cursor(api.user_timeline).items()):
         api.destroy_status(status.id)
         if verbose:
             print('Destroid tweet id: {}'.format(status.id))
     return True
-
-# TODO: tweet posts from database.
-# def tweet_posts(verbose=False):
-#     """Share posts not found in database to twitter."""
-#     pass
 
 
 def get_num_pages():
@@ -126,7 +123,7 @@ def create_table(purge=False, verbose=False):
 
 
 def populate_posts_db():
-    """Populates posts.db with posts and links from /archive/."""
+    """Populate database with posts and links from /archive/."""
     db_con = connect_database()
     archive_links = get_archive_posts()
     try:
@@ -140,8 +137,7 @@ def populate_posts_db():
 
 
 def get_posts(verbose=False):
-    """Returns a dictionary with database values"""
-
+    """Return a dictionary with database values."""
     # If database doesn't exist, create it
     if not path.isfile('posts.db'):
         create_table()
@@ -159,3 +155,7 @@ def get_posts(verbose=False):
     for post in posts_db.execute('SELECT title, link FROM posts'):
         posts[post[0]] = post[1]
     return posts
+
+
+def tweet_posts():
+    """Tweet posts not found in database."""

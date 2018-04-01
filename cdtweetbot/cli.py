@@ -1,3 +1,5 @@
+"""Command Line Argument Parser."""
+
 from cdtweetbot import delete_all_tweets, create_table, get_posts
 
 import argparse
@@ -14,21 +16,21 @@ exclusive.add_argument('-d', '--delete-all',
                        help='Delete all tweets', action='store_true')
 args = parser.parse_args()
 
-if args.delete_all:  # pragma: no cover
+if args.delete_all:
     answer = input('Are you sure you want to delete ALL your tweets? [Y/n]: ')
     answer = answer.lower()
     if answer == 'y' or answer == '':
         print('Deleting all tweets...')
         delete_all_tweets()
 
-if args.purge_db:  # pragma: no cover
+if args.purge_db:
     answer = input("You're about to purge the database, proceed? [Y/n]: ")
     answer = answer.lower()
     if answer == 'y' or answer == '':
         create_table(purge=True)
         print('Database purged. Posts where ')
 
-if args.show_posts:  # pragma: no cover
+if args.show_posts:
     posts = get_posts()
     post_no = 0
     for title, link in posts.items():

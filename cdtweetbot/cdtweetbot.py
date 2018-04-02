@@ -13,26 +13,26 @@
 
 """Modules to handle Twitter bot and database operations."""
 
-import tweepy
+from time import sleep
+from os import getenv, path, remove
 import sqlite3
 import requests
-from time import sleep
+import tweepy
 from bs4 import BeautifulSoup
-from os import getenv, path, remove
 from dotenv import load_dotenv, find_dotenv
 
 # load environment keys
 load_dotenv(find_dotenv())
-consumer_key = getenv('consumer_key')
-consumer_secret = getenv('consumer_secret')
-access_token = getenv('access_token')
-access_secret = getenv('access_secret')
+CONSUMER_KEY = getenv('CONSUMER_KEY')
+CONSUMER_SECRET = getenv('CONSUMER_SECRET')
+ACCESS_TOKEN = getenv('ACCESS_TOKEN')
+ACCESS_SECRET = getenv('ACCESS_SECRET')
 
 
 def auth():
     """Handle authentication and API settings."""
-    twitter_auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    twitter_auth.set_access_token(access_token, access_secret)
+    twitter_auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+    twitter_auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
     api = tweepy.API(twitter_auth)
     return api
 
@@ -74,7 +74,7 @@ def get_archive_posts():
     """Get post links from codingdose archive."""
     base_url = 'https://codingdose.info/archives/'
     paging_url = base_url + 'page/'
-    ordered_posts = {}
+    ordered_list = []
     for page in range(1, get_num_pages()):
         url = base_url if page < 2 else paging_url + str(page)
         page = requests.get(url)
@@ -87,8 +87,8 @@ def get_archive_posts():
             # appending post title and link to ordered_posts
             post_title = post.contents[0]
             post_link = url + post.get('href')
-            ordered_posts[post_title] = post_link
-    return ordered_posts
+            ordered_list.append([post_title, post_link])
+    return dict(ordered_list[::-1])
 
 
 def connect_database():
@@ -116,27 +116,31 @@ def create_table(purge=False, verbose=False):
                 `link`  integer NOT NULL UNIQUE,
                 UNIQUE(`title`,`link`));
             ''')
-    except Exception as e:
+    except sqlite3.OperationalError:
         if verbose is True:
             print('Table post already exists.')
     return True
 
 
-def populate_posts_db():
+def populate_posts_db(tweet=False, verbose=False):
     """Populate database with posts and links from /archive/."""
     db_con = connect_database()
     archive_links = get_archive_posts()
-    try:
-        db_con.executemany(
-            'INSERT INTO posts (title, link) VALUES (?, ?)',
-            archive_links.items())
-    except sqlite3.IntegrityError:
-        next
+    for title, link in archive_links.items():
+        try:
+            db_con.execute(
+                f"INSERT INTO posts (title, link) VALUES ('{title}', '{link}')")
+        except sqlite3.IntegrityError:
+            if verbose:
+                print('Duplicate, skipping.')
+        else:
+            if tweet:
+                tweet_post(title, link)
     db_con.commit()
     db_con.close()
 
 
-def get_posts(verbose=False):
+def get_posts():
     """Return a dictionary with database values."""
     # If database doesn't exist, create it
     if not path.isfile('posts.db'):
@@ -157,5 +161,13 @@ def get_posts(verbose=False):
     return posts
 
 
-def tweet_posts():
+def tweet_post(title, link, verbose=False):
     """Tweet posts not found in database."""
+    api = auth()
+    try:
+        limit_handler(api.update_status(f'{title} — {link}'))
+    except tweepy.error.TweepError:
+        if verbose:
+            print('Duplicate tweet, skipping.')
+    finally:
+        print(f'Tweeted: {title}: {link}')

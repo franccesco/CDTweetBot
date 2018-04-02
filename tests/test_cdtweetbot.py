@@ -58,9 +58,9 @@ class TestCDbot(unittest.TestCase):
         posts_list = list(posts_dict.keys())
 
         # get the first three posts
-        first_post = posts_list[-1]
-        second_post = posts_list[-2]
-        third_post = posts_list[-3]
+        first_post = posts_list[0]
+        second_post = posts_list[1]
+        third_post = posts_list[2]
 
         # compare them
         self.assertEqual('Hello All!', first_post)

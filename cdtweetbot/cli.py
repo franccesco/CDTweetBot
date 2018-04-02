@@ -2,7 +2,7 @@
 
 import argparse
 from time import sleep
-from cdtweetbot import delete_all_tweets, create_table, get_posts, tweet_post
+from cdtweetbot import delete_all_tweets, create_table, get_posts
 from cdtweetbot import populate_posts_db
 
 # CLI arguments with argparse
@@ -10,7 +10,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-s', '--show-posts',
                     help='Show posts in database', action='store_true')
 parser.add_argument('-p', '--purge-db',
-                    help='Purge the database', action='store_true', default=False)
+                    help='Purge the database', action='store_true',
+                    default=False)
 parser.add_argument('-t', '--tweet-posts',
                     action='store_true', help='Tweet posts.')
 exclusive = parser.add_mutually_exclusive_group()

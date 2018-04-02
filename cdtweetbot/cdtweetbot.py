@@ -128,8 +128,9 @@ def populate_posts_db(tweet=False, verbose=False):
     archive_links = get_archive_posts()
     for title, link in archive_links.items():
         try:
-            db_con.execute(
-                f"INSERT INTO posts (title, link) VALUES ('{title}', '{link}')")
+            db_con.execute("""
+                INSERT INTO posts (title, link) VALUES ('{}', '{}')
+                """.format(title, link))
         except sqlite3.IntegrityError:
             if verbose:
                 print('Duplicate, skipping.')

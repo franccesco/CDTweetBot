@@ -1,12 +1,9 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
 requests = "*"
 python-dotenv = "*"
 tweepy = "*"
@@ -15,15 +12,12 @@ tweepy = "*"
 coverage = "*"
 "bs4" = "*"
 
-
 [dev-packages]
-
 coverage = "*"
 pudb = "*"
 python-coveralls = "*"
 "flake8" = "*"
-
+pylint = "*"
 
 [requires]
-
 python_version = "3.6"

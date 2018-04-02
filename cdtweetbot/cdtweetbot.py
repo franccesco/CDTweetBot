@@ -134,6 +134,8 @@ def populate_posts_db(tweet=False, verbose=False):
         except sqlite3.IntegrityError:
             if verbose:
                 print('Duplicate, skipping.')
+        except sqlite3.OperationalError:
+            create_table()
         else:
             if tweet:
                 tweet_post(title, link)
